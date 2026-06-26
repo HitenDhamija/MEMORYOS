@@ -7,8 +7,13 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['@radix-ui/*'],
   },
-  env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
 };
 

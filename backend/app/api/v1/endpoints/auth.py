@@ -20,8 +20,13 @@ from app.utils.csrf import CSRFTokenGenerator, validate_csrf_token
 from app.utils.rate_limit import check_rate_limit, reset_rate_limit
 from app.utils.logging import security_logger, SecurityEventType, LogLevel
 from app.middleware.request_id import get_request_id
+from app.core.config import settings
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+def _is_production() -> bool:
+    return settings.environment == "production"
 
 
 def get_client_ip(request: Request) -> str:
@@ -80,9 +85,9 @@ async def register(
         response.set_cookie(
             key="csrf_token",
             value=csrf_token,
-            max_age=3600,  # 1 hour
-            secure=True,
-            httponly=False,  # JavaScript needs to read it
+            max_age=3600,
+            secure=_is_production(),
+            httponly=False,
             samesite="strict"
         )
         
@@ -154,7 +159,7 @@ async def login(
             key="csrf_token",
             value=csrf_token,
             max_age=3600,
-            secure=True,
+            secure=_is_production(),
             httponly=False,
             samesite="strict"
         )
@@ -215,7 +220,7 @@ async def refresh_token(
             key="csrf_token",
             value=csrf_token,
             max_age=3600,
-            secure=True,
+            secure=_is_production(),
             httponly=False,
             samesite="strict"
         )
@@ -252,7 +257,7 @@ async def logout(
     # Clear CSRF token
     response.delete_cookie(
         key="csrf_token",
-        secure=True,
+        secure=_is_production(),
         httponly=False,
         samesite="strict"
     )
