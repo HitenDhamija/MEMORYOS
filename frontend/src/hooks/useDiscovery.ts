@@ -45,7 +45,7 @@ export const useDiscoveryExplore = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await discoveryService.exploreMemo ries(limit, minSimilarity);
+      const data = await discoveryService.exploreMemories(limit, minSimilarity);
       setDiscovery(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to explore memories');

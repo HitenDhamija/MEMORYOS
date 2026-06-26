@@ -8,8 +8,10 @@ from typing import Any, Literal
 from jose import JWTError, jwt
 from app.core.config import settings
 import uuid
+import hashlib
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Use argon2 as primary (no 72-byte limit like bcrypt), fallback to bcrypt
+pwd_context = CryptContext(schemes=["argon2", "bcrypt"], deprecated="auto")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

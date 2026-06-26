@@ -20,6 +20,7 @@ from app.services.processing.text_processor import TextProcessor
 from app.services.processing.markdown_processor import MarkdownProcessor
 from app.services.processing.image_processor import ImageProcessor
 from app.services.processing.bookmark_processor import BookmarkProcessor
+from app.services.processing.docx_processor import DocxProcessor
 from app.services.processing.topic_extractor import TopicExtractor
 from app.services.processing.text_analyzer import TextAnalyzer
 
@@ -42,6 +43,7 @@ class ProcessingOrchestrator:
         'pdf': PDFProcessor,
         'txt': TextProcessor,
         'md': MarkdownProcessor,
+        'docx': DocxProcessor,
         'image': ImageProcessor,
         'bookmark': BookmarkProcessor,
     }
@@ -104,12 +106,10 @@ class ProcessingOrchestrator:
             logger.debug(f"Extracting structure from {memory.original_filename}")
             document_structure, structure_error = processor.extract_structure_safe()
             
-            # If all extractions failed, mark as failed
+            # If text extraction failed, try to continue with empty text
             if not extracted_text:
-                error_msg = "Unable to extract content from document"
-                if text_error:
-                    error_msg += f": {text_error}"
-                raise ValueError(error_msg)
+                logger.warning(f"No text extracted from {memory.original_filename}, marking as processed with empty content")
+                extracted_text = ""
             
             # Analyze text
             logger.debug(f"Analyzing text from {memory.original_filename}")

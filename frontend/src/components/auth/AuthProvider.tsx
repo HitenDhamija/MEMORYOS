@@ -1,6 +1,6 @@
-"""
-Auth provider component for global auth context and session management.
-"""
+/**
+ * Auth provider component for global auth context and session management.
+ */
 
 "use client";
 

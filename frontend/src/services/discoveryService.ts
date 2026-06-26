@@ -45,7 +45,7 @@ class DiscoveryService {
     topK: number = 5
   ): Promise<MemoryRecommendations> {
     const response = await apiClient.get(
-      `/discovery/recommendations/${memoryId}?top_k=${topK}`
+      `/v1/discovery/recommendations/${memoryId}?top_k=${topK}`
     );
     return response.data;
   }
@@ -53,11 +53,11 @@ class DiscoveryService {
   /**
    * Explore memory connections and discover related content
    */
-  async exploreMemo ries(
+  async exploreMemories(
     limit: number = 20,
     minSimilarity: number = 0.5
   ): Promise<DiscoveryResponse> {
-    const response = await apiClient.get('/discovery/explore', {
+    const response = await apiClient.get('/v1/discovery/explore', {
       params: {
         limit,
         min_similarity: minSimilarity,
@@ -74,7 +74,7 @@ class DiscoveryService {
     topK: number = 10,
     minSimilarity: number = 0.3
   ): Promise<SearchResponse> {
-    const response = await apiClient.post('/discovery/search', null, {
+    const response = await apiClient.post('/v1/discovery/search', null, {
       params: {
         query,
         top_k: topK,

@@ -31,6 +31,7 @@ interface UserProfile {
   email: string;
   username: string;
   full_name?: string;
+  avatar_url?: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -145,6 +146,18 @@ const authService = {
    */
   async updateProfile(data: UpdateProfilePayload): Promise<UserProfile> {
     const response = await apiClient.put<UserProfile>("/v1/users/me", data);
+    return response.data;
+  },
+
+  /**
+   * Upload avatar image
+   */
+  async uploadAvatar(file: File): Promise<UserProfile> {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await apiClient.post<UserProfile>("/v1/users/me/avatar", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return response.data;
   },
 

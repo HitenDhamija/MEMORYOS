@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.models.models import User
+from app.models.models import User, Memory
 from app.api.deps import get_current_user
 from app.services.embeddings import EmbeddingOrchestrator
 
@@ -173,14 +173,19 @@ async def semantic_search(
             min_similarity
         )
         
-        search_results = [
-            {
-                "memory_id": m_id,
-                "filename": fname,
-                "similarity_score": round(score, 4)
-            }
-            for m_id, fname, score in results
-        ]
+        search_results = []
+        for m_id, fname, score in results:
+            mem = db.query(Memory).filter(
+                Memory.id == m_id,
+                Memory.user_id == current_user.id,
+                Memory.is_deleted == False
+            ).first()
+            if mem:
+                search_results.append({
+                    "memory_id": m_id,
+                    "filename": fname,
+                    "similarity_score": round(score, 4)
+                })
         
         return {
             "query": query,

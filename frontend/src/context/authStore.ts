@@ -1,6 +1,6 @@
-"""
-Auth store using Zustand with persistence.
-"""
+/**
+ * Auth store using Zustand with persistence.
+ */
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";

@@ -166,7 +166,7 @@ async def get_related_memories(
                 
                 related_memories.append(RelatedMemoryItem(
                     memory_id=related_mem.id,
-                    filename=related_mem.filename,
+                    filename=related_mem.original_filename,
                     similarity_score=round(similarity_score, 4),
                     processing_status=related_proc_doc.processing_status if related_proc_doc else None
                 ))

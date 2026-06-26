@@ -78,6 +78,7 @@ class FileValidator:
             ".txt": ["text/plain"],
             ".md": ["text/markdown", "text/plain"],
             ".markdown": ["text/markdown", "text/plain"],
+            ".docx": ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"],
             ".url": ["text/plain"],
             ".webloc": ["text/plain"],
         }

@@ -29,12 +29,14 @@ class UserUpdate(BaseModel):
     """User update schema."""
     email: Optional[EmailStr] = None
     full_name: Optional[str] = None
+    avatar_url: Optional[str] = None
     password: Optional[str] = Field(None, min_length=8)
 
 
 class UserResponse(UserBase):
     """User response schema."""
     id: int
+    avatar_url: Optional[str] = None
     is_active: bool
     created_at: datetime
     updated_at: datetime
@@ -129,14 +131,6 @@ class MemoryResponse(BaseModel):
         from_attributes = True
 
 
-class MemoryListResponse(BaseModel):
-    """Memory list response schema."""
-    items: list[MemoryResponse]
-    total: int
-    skip: int
-    limit: int
-
-
 # ============== Processing/Document Intelligence Schemas ==============
 
 
@@ -147,6 +141,7 @@ class ProcessedDocumentResponse(BaseModel):
     user_id: int
     extracted_text: Optional[str]
     preview: Optional[str]
+    summary: Optional[str]
     word_count: int
     char_count: int
     language: str
@@ -159,6 +154,16 @@ class ProcessedDocumentResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     processed_at: Optional[datetime]
+
+    # Document Intelligence fields
+    document_overview: Optional[str] = None
+    topics_covered: Optional[List[str]] = None
+    key_concepts: Optional[List[str]] = None
+    intelligent_keywords: Optional[List[str]] = None
+    doc_intelligence_metadata: Optional[dict] = None
+    suggested_questions: Optional[List[str]] = None
+    learning_objectives: Optional[List[str]] = None
+    knowledge_nodes: Optional[List[dict]] = None
 
     class Config:
         from_attributes = True
@@ -180,3 +185,63 @@ class ProcessingStatsResponse(BaseModel):
     processing: int
     total_words: int
     success_rate: float
+
+
+class RelatedMemoryResponse(BaseModel):
+    """Related memory with similarity score."""
+    id: int
+    title: str
+    file_type: str
+    similarity_score: float
+    preview: Optional[str]
+    upload_date: datetime
+
+
+class MemoryDetailsResponse(BaseModel):
+    """Complete memory details with processed document and related memories."""
+    # Memory fields
+    id: int
+    file_id: str
+    user_id: int
+    original_filename: str
+    file_type: str
+    file_size: int
+    title: str
+    description: Optional[str]
+    tags: Optional[List[str]]
+    upload_date: datetime
+    updated_at: datetime
+    
+    # Processing status
+    is_processed: bool
+    processing_status: str
+    processed_at: Optional[datetime]
+    processing_error: Optional[str]
+    
+    # Processed document fields
+    extracted_text: Optional[str]
+    preview: Optional[str]
+    summary: Optional[str]
+    word_count: int
+    char_count: int
+    language: str
+    reading_time: float
+    topics: Optional[dict]
+    doc_metadata: Optional[dict]
+    document_structure: Optional[dict]
+    
+    # Document Intelligence fields
+    document_overview: Optional[str] = None
+    topics_covered: Optional[List[str]] = None
+    key_concepts: Optional[List[str]] = None
+    intelligent_keywords: Optional[List[str]] = None
+    doc_intelligence_metadata: Optional[dict] = None
+    suggested_questions: Optional[List[str]] = None
+    learning_objectives: Optional[List[str]] = None
+    knowledge_nodes: Optional[List[dict]] = None
+    
+    # Related memories
+    related_memories: Optional[List[RelatedMemoryResponse]] = []
+    
+    class Config:
+        from_attributes = True

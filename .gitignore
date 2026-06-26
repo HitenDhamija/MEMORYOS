@@ -1,0 +1,96 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Next.js
+frontend/.next/
+frontend/out/
+frontend/tsconfig.tsbuildinfo
+
+# Build
+dist/
+build/
+*.egg-info/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+coverage/
+htmlcov/
+.pytest_cache/
+.coverage
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Database
+*.db
+*.sqlite3
+
+# Uploaded files
+backend/uploads/
+
+# ChromaDB
+backend/chroma_db/
+
+# Model cache
+backend/.cache/
+
+# Internal docs (dev-only, not for public repo)
+ARCHITECTURE.md
+DESIGN.md
+EXECUTIVE_SUMMARY.md
+IMPLEMENTATION_STATUS.md
+JWT_AUTHENTICATION.md
+JWT_AUTHENTICATION_EXAMPLES.md
+JWT_AUTH_QUICK_REFERENCE.md
+PHASE*.md
+PRODUCTION_SECURITY_IMPLEMENTATION.md
+REFACTORING_BEFORE_AFTER.md
+SECURITY_AUDIT_REPORT.md
+GETTING_STARTED.md
+CLAUDE.md
+GEMINI.md
+AGENTS.md
+frontend/MEMORY_COMPONENTS.md
+
+# Internal scripts
+verify_auth.py
+verify_security_implementation.sh
+backend/init_phase*.py
+backend/phase*_test_suite.py
+backend/check_*.py
+backend/add_summary_column.py
+frontend/src/app/demo/
+frontend/src/services/demoService.ts
+backend/test_*.py
+frontend/tsconfig.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db

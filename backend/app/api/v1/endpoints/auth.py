@@ -176,7 +176,7 @@ async def login(
 async def refresh_token(
     request: Request,
     response: Response,
-    request_data: RefreshTokenRequest = Depends(),
+    request_data: RefreshTokenRequest,
     db: Session = Depends(get_db)
 ) -> dict[str, str]:
     """Refresh access token with rate limiting and logging.

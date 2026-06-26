@@ -1,6 +1,6 @@
-"""
-Middleware for authentication protection.
-"""
+/**
+ * Middleware for authentication protection.
+ */
 
 import { NextRequest, NextResponse } from "next/server";
 

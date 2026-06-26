@@ -1,6 +1,6 @@
-"""
-API client with automatic token refresh, CSRF protection, and interceptors.
-"""
+/**
+ * API client with automatic token refresh, CSRF protection, and interceptors.
+ */
 
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
 import Cookies from "js-cookie";

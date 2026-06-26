@@ -20,7 +20,7 @@ from app.utils.storage import StorageService
 logger = logging.getLogger(__name__)
 
 router = APIRouter(
-    prefix="/api/v1/processing",
+    prefix="/processing",
     tags=["processing"],
     dependencies=[Depends(get_current_user)]
 )

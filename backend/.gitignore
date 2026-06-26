@@ -30,3 +30,16 @@ htmlcov/
 .DS_Store
 *.db
 instance/
+
+
+# Uploads
+uploads/
+
+# ChromaDB vector storage
+chroma_data/
+
+# Alembic cache
+alembic/versions/__pycache__/
+
+# Logs
+*.log

@@ -2,8 +2,10 @@
 Main FastAPI application with enhanced security.
 """
 
+import os
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from app.core.config import settings
 from app.middleware.cors import setup_cors
@@ -16,6 +18,7 @@ Base.metadata.create_all(bind=engine)
 
 # Create upload directory
 Path(settings.upload_dir).mkdir(parents=True, exist_ok=True)
+Path(os.path.join(settings.upload_dir, "avatars")).mkdir(parents=True, exist_ok=True)
 
 # Initialize app
 app = FastAPI(
@@ -30,6 +33,9 @@ app.add_middleware(RequestIDMiddleware)
 
 # 2. CORS after request ID
 setup_cors(app)
+
+# 3. Serve uploaded files
+app.mount("/uploads", StaticFiles(directory=settings.upload_dir), name="uploads")
 
 # Include routes
 app.include_router(api_router)

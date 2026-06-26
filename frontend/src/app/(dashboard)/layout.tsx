@@ -1,6 +1,6 @@
-"""
-Dashboard layout with navigation.
-"""
+/**
+ * Dashboard layout with Apple-style navigation.
+ */
 
 "use client";
 
@@ -13,9 +13,9 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-apple-parchment">
       <Navigation />
-      <main className="max-w-7xl mx-auto py-8 px-4">{children}</main>
+      <main className="max-w-[980px] mx-auto py-apple-section px-6">{children}</main>
     </div>
   );
 }

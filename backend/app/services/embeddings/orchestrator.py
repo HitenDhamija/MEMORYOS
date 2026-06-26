@@ -17,6 +17,7 @@ import logging
 from typing import Optional, List, Tuple
 from datetime import datetime
 import pytz
+import json
 from sqlalchemy.orm import Session
 
 from app.models import ProcessedDocument, DocumentEmbedding, Memory
@@ -106,14 +107,23 @@ class EmbeddingOrchestrator:
             # Create vector ID
             vector_id = f"proc_doc_{processed_document_id}_user_{user_id}"
             
+            # Parse topics from JSON string
+            topics_str = ""
+            if proc_doc.topics:
+                try:
+                    topics_dict = json.loads(proc_doc.topics) if isinstance(proc_doc.topics, str) else proc_doc.topics
+                    technologies = topics_dict.get("technologies", [])
+                    topics_str = ",".join([t["name"] if isinstance(t, dict) else t for t in technologies[:5]])
+                except (json.JSONDecodeError, TypeError, KeyError):
+                    topics_str = ""
+            
             # Store in ChromaDB
             metadata = {
                 "processed_document_id": processed_document_id,
                 "memory_id": proc_doc.memory_id,
                 "user_id": user_id,
                 "language": proc_doc.language,
-                "topics": ",".join([t["name"] for t in proc_doc.topics.get("technologies", [])[:5]])
-                if proc_doc.topics else ""
+                "topics": topics_str
             }
             
             stored = self.embedding_service.store_embedding(
@@ -320,7 +330,7 @@ class EmbeddingOrchestrator:
                                 if memory:
                                     results.append((
                                         memory.id,
-                                        memory.filename,
+                                        memory.original_filename,
                                         similarity_score
                                     ))
                     except (IndexError, ValueError):
@@ -417,7 +427,7 @@ class EmbeddingOrchestrator:
                 ).first()
                 
                 if memory:
-                    results.append((related_memory_id, memory.filename, score))
+                    results.append((related_memory_id, memory.original_filename, score))
             
             return results
         except Exception as e:
@@ -466,7 +476,7 @@ class EmbeddingOrchestrator:
                     # Filter by similarity
                     filtered_related = [(m_id, fname, score) for m_id, fname, score in related if score >= min_similarity]
                     if filtered_related:
-                        results.append((memory.id, memory.filename, filtered_related))
+                        results.append((memory.id, memory.original_filename, filtered_related))
             
             return results
         except Exception as e:

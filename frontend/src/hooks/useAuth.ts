@@ -1,10 +1,10 @@
-"""
-Authentication hook with session management.
-"""
+/**
+ * Authentication hook with session management.
+ */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import authService, { type UserProfile, type UpdateProfilePayload } from "@/services/authService";
+import authService, { type UpdateProfilePayload } from "@/services/authService";
 import { useAuthStore } from "@/context/authStore";
 
 interface UseAuthReturn {
@@ -22,7 +22,6 @@ interface UseAuthReturn {
 export const useAuth = (): UseAuthReturn => {
   const router = useRouter();
   const { user, isAuthenticated, setUser, clearUser, setLoading, isLoading } = useAuthStore();
-  const [sessionError, setSessionError] = useState<string | null>(null);
 
   // Initialize auth state on mount
   useEffect(() => {
@@ -65,8 +64,6 @@ export const useAuth = (): UseAuthReturn => {
         setUser(profile as any);
         router.push("/dashboard");
       } catch (error: any) {
-        const message = error.response?.data?.detail || "Login failed";
-        setSessionError(message);
         throw error;
       } finally {
         setLoading(false);
@@ -82,8 +79,6 @@ export const useAuth = (): UseAuthReturn => {
         await authService.register({ email, username, password, full_name: fullName });
         router.push("/login");
       } catch (error: any) {
-        const message = error.response?.data?.detail || "Registration failed";
-        setSessionError(message);
         throw error;
       } finally {
         setLoading(false);
@@ -111,8 +106,6 @@ export const useAuth = (): UseAuthReturn => {
         const updated = await authService.updateProfile(data);
         setUser(updated as any);
       } catch (error: any) {
-        const message = error.response?.data?.detail || "Update failed";
-        setSessionError(message);
         throw error;
       }
     },

@@ -45,7 +45,7 @@ export interface StorageSummary {
 }
 
 class MemoryService {
-  private baseUrl = '/api/v1/memories';
+  private baseUrl = '/v1/memories';
 
   /**
    * Upload a new memory file

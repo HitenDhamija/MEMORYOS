@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     refresh_token_expire_days: int = 7
     
     # CORS
-    cors_origins: List[str] = ["http://localhost:3000"]
+    cors_origins: List[str] = ["http://localhost:3000", "http://localhost:3001"]
     
     # Environment
     environment: str = "development"
@@ -37,6 +37,7 @@ class Settings(BaseSettings):
         "image": [".jpg", ".jpeg", ".png", ".gif", ".webp"],
         "txt": [".txt"],
         "md": [".md", ".markdown"],
+        "docx": [".docx"],
         "bookmark": [".url", ".webloc"],
     }
 

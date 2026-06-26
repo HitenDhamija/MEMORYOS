@@ -24,15 +24,18 @@ async def get_current_user(
     try:
         # Verify token type is "access"
         payload = verify_token_type(token, "access")
-        user_id: int = payload.get("sub")
-
-        if user_id is None:
+        user_id_str = payload.get("sub")
+        
+        if not user_id_str:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication credentials",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-    except JWTError:
+        
+        # Convert sub claim from string to integer
+        user_id = int(user_id_str)
+    except (ValueError, JWTError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token",
@@ -65,14 +68,17 @@ async def get_refresh_token_user(
     try:
         # Verify token type is "refresh"
         payload = verify_token_type(token, "refresh")
-        user_id: int = payload.get("sub")
+        user_id_str = payload.get("sub")
 
-        if user_id is None:
+        if not user_id_str:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid refresh token",
             )
-    except JWTError:
+        
+        # Convert sub claim from string to integer
+        user_id = int(user_id_str)
+    except (ValueError, JWTError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired refresh token",

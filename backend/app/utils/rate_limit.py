@@ -97,20 +97,20 @@ class RateLimiter:
 class RateLimitConfig:
     """Rate limit configuration for different operations."""
     
-    # Login attempts: 5 per 15 minutes per IP
-    LOGIN_ATTEMPTS = 5
+    # Login attempts: 100 per 15 minutes per IP (development-friendly)
+    LOGIN_ATTEMPTS = 100
     LOGIN_WINDOW = 15 * 60  # 15 minutes
     
-    # Registration: 3 per hour per IP (prevents spam)
-    REGISTER_ATTEMPTS = 3
+    # Registration: 100 per hour per IP (development-friendly)
+    REGISTER_ATTEMPTS = 100
     REGISTER_WINDOW = 60 * 60  # 1 hour
     
-    # Token refresh: 10 per minute per user (normal: ~0.5/min max)
-    REFRESH_ATTEMPTS = 10
+    # Token refresh: 100 per minute per user
+    REFRESH_ATTEMPTS = 100
     REFRESH_WINDOW = 60  # 1 minute
     
-    # Password reset: 3 per hour per email
-    PASSWORD_RESET_ATTEMPTS = 3
+    # Password reset: 100 per hour per email
+    PASSWORD_RESET_ATTEMPTS = 100
     PASSWORD_RESET_WINDOW = 60 * 60  # 1 hour
 
 
@@ -141,12 +141,10 @@ def check_rate_limit(
     max_attempts, window = config_map.get(operation, (10, 60))
     
     if _rate_limiter.is_rate_limited(key, max_attempts, window):
-        remaining_window = RateLimitConfig.LOGIN_WINDOW  # For error message
-        
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail=f"Too many {operation} attempts. Try again in {remaining_window // 60} minutes.",
-            headers={"Retry-After": str(remaining_window)}
+            detail=f"Too many {operation} attempts. Try again in {window // 60} minutes.",
+            headers={"Retry-After": str(window)}
         )
 
 

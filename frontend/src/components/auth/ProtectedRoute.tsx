@@ -1,6 +1,6 @@
-"""
-Protected route component for client-side route protection.
-"""
+/**
+ * Protected route component for client-side route protection.
+ */
 
 "use client";
 

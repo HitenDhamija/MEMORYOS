@@ -80,8 +80,8 @@ class AuthService:
     @staticmethod
     def create_tokens(user_id: int) -> dict[str, str]:
         """Create access and refresh tokens for user."""
-        access_token = create_access_token(data={"sub": user_id})
-        refresh_token = create_refresh_token(data={"sub": user_id})
+        access_token = create_access_token(data={"sub": str(user_id)})
+        refresh_token = create_refresh_token(data={"sub": str(user_id)})
 
         return {
             "access_token": access_token,
@@ -92,7 +92,7 @@ class AuthService:
     @staticmethod
     def refresh_access_token(user_id: int) -> dict[str, str]:
         """Create new access token from valid user_id."""
-        access_token = create_access_token(data={"sub": user_id})
+        access_token = create_access_token(data={"sub": str(user_id)})
 
         return {
             "access_token": access_token,

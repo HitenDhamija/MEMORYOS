@@ -1,6 +1,11 @@
+/**
+ * Memory Card - Apple Design Language
+ */
+
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Download, Trash2, Edit2 } from 'lucide-react';
 import memoryService, { Memory } from '@/services/memoryService';
 
@@ -10,28 +15,9 @@ interface MemoryCardProps {
   onUpdate: () => void;
 }
 
-// Helper functions for display formatting
 const getFileIcon = (fileType: string): string => {
-  const icons: Record<string, string> = {
-    pdf: '📄',
-    image: '🖼️',
-    txt: '📝',
-    md: '📋',
-    bookmark: '🔖',
-    other: '📎',
-  };
+  const icons: Record<string, string> = { pdf: '📄', image: '🖼️', txt: '📝', md: '📋', bookmark: '🔖', other: '📎' };
   return icons[fileType] || icons.other;
-};
-
-const getStatusColor = (status: string): string => {
-  const colors: Record<string, string> = {
-    pending: 'bg-yellow-100 text-yellow-800',
-    uploaded: 'bg-blue-100 text-blue-800',
-    processing: 'bg-purple-100 text-purple-800',
-    processed: 'bg-green-100 text-green-800',
-    failed: 'bg-red-100 text-red-800',
-  };
-  return colors[status] || colors.pending;
 };
 
 const formatFileSize = (bytes: number): string => {
@@ -42,128 +28,51 @@ const formatFileSize = (bytes: number): string => {
   return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
 };
 
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date);
-};
+const formatDate = (dateString: string): string => new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
 export default function MemoryCard({ memory, onDelete, onUpdate }: MemoryCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [editTitle, setEditTitle] = useState(memory.title);
   const [editDescription, setEditDescription] = useState(memory.description || '');
-  const [editTags, setEditTags] = useState(
-    Array.isArray(memory.tags) ? memory.tags.join(',') : memory.tags || ''
-  );
+  const [editTags, setEditTags] = useState(Array.isArray(memory.tags) ? memory.tags.join(',') : memory.tags || '');
   const [isSaving, setIsSaving] = useState(false);
 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this memory?')) return;
-
     setIsDeleting(true);
-    try {
-      await memoryService.deleteMemory(memory.id);
-      onDelete();
-    } catch (error) {
-      alert(error instanceof Error ? error.message : 'Failed to delete memory');
-    } finally {
-      setIsDeleting(false);
-    }
+    try { await memoryService.deleteMemory(memory.id); onDelete(); } catch (error) { alert(error instanceof Error ? error.message : 'Failed to delete'); } finally { setIsDeleting(false); }
   };
 
   const handleSaveEdit = async () => {
     setIsSaving(true);
-    try {
-      await memoryService.updateMemory(memory.id, {
-        title: editTitle,
-        description: editDescription || undefined,
-        tags: editTags || undefined,
-      });
-      setShowEditForm(false);
-      onUpdate();
-    } catch (error) {
-      alert(error instanceof Error ? error.message : 'Failed to update memory');
-    } finally {
-      setIsSaving(false);
-    }
+    try { await memoryService.updateMemory(memory.id, { title: editTitle, description: editDescription || undefined, tags: editTags || undefined }); setShowEditForm(false); onUpdate(); } catch (error) { alert(error instanceof Error ? error.message : 'Failed to update'); } finally { setIsSaving(false); }
   };
 
   const handleDownload = async () => {
-    try {
-      await memoryService.downloadMemory(memory.id, memory.original_filename);
-    } catch (error) {
-      alert(error instanceof Error ? error.message : 'Failed to download file');
-    }
+    try { await memoryService.downloadMemory(memory.id, memory.original_filename); } catch (error) { alert(error instanceof Error ? error.message : 'Failed to download'); }
   };
-
-  const fileIcon = getFileIcon(memory.file_type);
-  const statusColor = getStatusColor(memory.processing_status);
-  const formattedDate = formatDate(memory.upload_date);
-  const fileSize = formatFileSize(memory.file_size);
 
   if (showEditForm) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <h3 className="font-semibold text-gray-900 mb-3">Edit Memory</h3>
-
+      <div className="apple-utility-card">
+        <h3 className="text-apple-body-strong text-apple-ink mb-3">Edit Memory</h3>
         <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Title
-            </label>
-            <input
-              type="text"
-              value={editTitle}
-              onChange={(e) => setEditTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <label className="block text-apple-caption-strong text-apple-ink mb-1">Title</label>
+            <input type="text" name="edit-title" autoComplete="off" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="apple-search-input" />
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <textarea
-              value={editDescription}
-              onChange={(e) => setEditDescription(e.target.value)}
-              rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <label className="block text-apple-caption-strong text-apple-ink mb-1">Description</label>
+            <textarea name="edit-description" value={editDescription} onChange={(e) => setEditDescription(e.target.value)} rows={2} className="apple-search-input h-auto min-h-[60px] resize-y" />
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tags
-            </label>
-            <input
-              type="text"
-              value={editTags}
-              onChange={(e) => setEditTags(e.target.value)}
-              placeholder="python,tutorial"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <label className="block text-apple-caption-strong text-apple-ink mb-1">Tags</label>
+            <input type="text" name="edit-tags" autoComplete="off" value={editTags} onChange={(e) => setEditTags(e.target.value)} placeholder="python,tutorial" className="apple-search-input" />
           </div>
-
           <div className="flex gap-2 pt-2">
-            <button
-              onClick={handleSaveEdit}
-              disabled={isSaving}
-              className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 font-medium transition-colors"
-            >
-              {isSaving ? 'Saving...' : 'Save'}
-            </button>
-            <button
-              onClick={() => setShowEditForm(false)}
-              className="flex-1 px-3 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 font-medium transition-colors"
-            >
-              Cancel
-            </button>
+            <button onClick={handleSaveEdit} disabled={isSaving} className="apple-btn-primary flex-1 disabled:opacity-50">{isSaving ? 'Saving…' : 'Save'}</button>
+            <button onClick={() => setShowEditForm(false)} className="apple-btn-secondary flex-1">Cancel</button>
           </div>
         </div>
       </div>
@@ -171,91 +80,40 @@ export default function MemoryCard({ memory, onDelete, onUpdate }: MemoryCardPro
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-      {/* Header */}
-      <div className="p-4">
-        <div className="flex items-start gap-3 mb-3">
-          <span className="text-3xl flex-shrink-0">{fileIcon}</span>
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-900 break-words line-clamp-2">
-              {memory.title}
-            </h3>
-            <p className="text-xs text-gray-500 mt-1">
-              {memory.original_filename} · {fileSize}
-            </p>
+    <div className="apple-utility-card flex flex-col h-full !p-0">
+      <Link href={`/memories/${memory.id}`} className="block flex-1">
+        <div className="px-6 pt-6 pb-5 hover:bg-apple-parchment transition-colors h-full">
+          <div className="flex items-start gap-4 mb-4">
+            <span className="text-4xl flex-shrink-0">{getFileIcon(memory.file_type)}</span>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-apple-body-strong text-apple-ink break-words line-clamp-2 hover:text-apple-blue transition-colors">{memory.title}</h3>
+              <p className="text-apple-fine-print text-apple-ink-48 mt-1.5">{memory.original_filename} · {formatFileSize(memory.file_size)}</p>
+            </div>
           </div>
-        </div>
-
-        {/* Type Badge */}
-        <div className="flex items-center gap-2 mb-3">
-          <span className="inline-block px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">
-            {memory.file_type}
-          </span>
-          <span className={`inline-block px-2 py-1 text-xs font-medium rounded ${statusColor}`}>
-            {memory.processing_status}
-          </span>
-        </div>
-
-        {/* Description */}
-        {memory.description && (
-          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-            {memory.description}
-          </p>
-        )}
-
-        {/* Tags */}
-        {memory.tags && (
-          <div className="flex flex-wrap gap-1 mb-3">
-            {(Array.isArray(memory.tags)
-              ? memory.tags
-              : String(memory.tags)
-                  .split(',')
-                  .filter((t) => t.trim())
-            ).map((tag, idx) => (
-              <span
-                key={idx}
-                className="inline-block px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded"
-              >
-                #{tag.trim()}
-              </span>
-            ))}
+          <div className="flex items-center gap-2 mb-4">
+            <span className="inline-block px-2.5 py-1 text-apple-fine-print bg-apple-parchment text-apple-ink rounded-apple-pill">{memory.file_type}</span>
+            <span className="inline-block px-2.5 py-1 text-apple-fine-print bg-apple-parchment text-apple-ink rounded-apple-pill capitalize">{memory.processing_status}</span>
           </div>
-        )}
-
-        {/* Metadata */}
-        <div className="text-xs text-gray-500 mb-4">
-          Uploaded {formattedDate}
+          {memory.description && <p className="text-apple-caption text-apple-ink-48 mb-4 line-clamp-2">{memory.description}</p>}
+          {memory.tags && (
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {(Array.isArray(memory.tags) ? memory.tags : String(memory.tags).split(',').filter((t) => t.trim())).map((tag, idx) => (
+                <span key={idx} className="inline-block px-2.5 py-1 text-apple-fine-print bg-apple-blue/10 text-apple-blue rounded-apple-pill">#{tag.trim()}</span>
+              ))}
+            </div>
+          )}
+          <div className="text-apple-fine-print text-apple-ink-48">Uploaded {formatDate(memory.upload_date)}</div>
         </div>
-      </div>
-
-      {/* Actions */}
-      <div className="border-t border-gray-200 px-4 py-3 bg-gray-50 flex gap-2">
-        <button
-          onClick={handleDownload}
-          title="Download file"
-          className="flex-1 flex items-center justify-center gap-1 px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
-        >
+      </Link>
+      <div className="border-t border-apple-hairline px-6 py-4 flex gap-3">
+        <button onClick={(e) => { e.preventDefault(); handleDownload(); }} aria-label="Download file" className="flex-1 inline-flex items-center justify-center px-3 py-2.5 text-sm rounded-apple-pill border border-apple-blue text-apple-blue hover:bg-apple-blue/5 transition-all min-w-0">
           <Download className="h-4 w-4" />
-          <span className="hidden sm:inline">Download</span>
         </button>
-
-        <button
-          onClick={() => setShowEditForm(true)}
-          title="Edit metadata"
-          className="flex-1 flex items-center justify-center gap-1 px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
-        >
+        <button onClick={() => setShowEditForm(true)} aria-label="Edit metadata" className="flex-1 inline-flex items-center justify-center px-3 py-2.5 text-sm rounded-apple-pill border border-apple-blue text-apple-blue hover:bg-apple-blue/5 transition-all min-w-0">
           <Edit2 className="h-4 w-4" />
-          <span className="hidden sm:inline">Edit</span>
         </button>
-
-        <button
-          onClick={handleDelete}
-          disabled={isDeleting}
-          title="Delete memory"
-          className="flex-1 flex items-center justify-center gap-1 px-3 py-2 text-sm text-red-700 bg-white border border-gray-300 rounded hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
+        <button onClick={handleDelete} disabled={isDeleting} aria-label="Delete memory" className="flex-1 inline-flex items-center justify-center px-3 py-2.5 text-sm rounded-apple-pill border border-red-300 text-red-600 hover:bg-red-50 transition-all disabled:opacity-50 min-w-0">
           <Trash2 className="h-4 w-4" />
-          <span className="hidden sm:inline">Delete</span>
         </button>
       </div>
     </div>
